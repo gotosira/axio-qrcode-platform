@@ -96,6 +96,8 @@ export default function AuthModal() {
                   className="w-full border rounded px-3 py-2"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  name="name"
+                  autoComplete="name"
                 />
               )}
               <input
@@ -105,6 +107,8 @@ export default function AuthModal() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                name="email"
+                autoComplete="email"
               />
               <input
                 type="password"
@@ -113,6 +117,8 @@ export default function AuthModal() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                name={mode === "login" ? "current-password" : "new-password"}
+                autoComplete={mode === "login" ? "current-password" : "new-password"}
               />
               {error && <p className="text-sm text-red-600">{error}</p>}
               <button
