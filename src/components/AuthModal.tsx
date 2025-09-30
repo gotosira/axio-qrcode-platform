@@ -1,6 +1,10 @@
 "use client";
 import { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
+import Modal from "@/components/ui/Modal";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { toast } from "sonner";
 
 export default function AuthModal() {
   // Guard against missing provider during certain prerendered routes
@@ -37,8 +41,10 @@ export default function AuthModal() {
       });
       if (res?.error) throw new Error(res.error);
       setOpen(false);
+      toast.success(mode === "signup" ? "Account created" : "Signed in");
     } catch (err: any) {
       setError(err.message || "Something went wrong");
+      toast.error(err.message || "Error");
     } finally {
       setLoading(false);
     }
@@ -60,15 +66,9 @@ export default function AuthModal() {
 
   return (
     <div>
-      <button
-        className="px-3 py-1 rounded bg-black text-white text-sm"
-        onClick={() => setOpen(true)}
-      >
-        Sign in
-      </button>
-      {open && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-md w-full max-w-sm p-6 space-y-4">
+      <Button size="sm" onClick={() => setOpen(true)}>Sign in</Button>
+      <Modal open={open} onClose={() => setOpen(false)}>
+          <div className="w-full p-6 space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">
                 {mode === "login" ? "Sign in" : "Create account"}
@@ -76,62 +76,22 @@ export default function AuthModal() {
               <button onClick={() => setOpen(false)}>✕</button>
             </div>
             <div className="flex gap-2 text-sm">
-              <button
-                className={`px-2 py-1 rounded ${mode === "login" ? "bg-gray-900 text-white" : "bg-gray-100"}`}
-                onClick={() => setMode("login")}
-              >
-                Login
-              </button>
-              <button
-                className={`px-2 py-1 rounded ${mode === "signup" ? "bg-gray-900 text-white" : "bg-gray-100"}`}
-                onClick={() => setMode("signup")}
-              >
-                Sign up
-              </button>
+              <Button variant={mode === "login" ? "primary" : "secondary"} size="sm" onClick={() => setMode("login")}>Login</Button>
+              <Button variant={mode === "signup" ? "primary" : "secondary"} size="sm" onClick={() => setMode("signup")}>Sign up</Button>
             </div>
             <form onSubmit={onSubmit} className="space-y-3">
               {mode === "signup" && (
-                <input
-                  placeholder="Name (optional)"
-                  className="w-full border rounded px-3 py-2"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  name="name"
-                  autoComplete="name"
-                />
+                <Input placeholder="Name (optional)" value={name} onChange={(e) => setName(e.target.value)} name="name" autoComplete="name" />
               )}
-              <input
-                type="email"
-                placeholder="Email"
-                className="w-full border rounded px-3 py-2"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                name="email"
-                autoComplete="email"
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                className="w-full border rounded px-3 py-2"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                name={mode === "login" ? "current-password" : "new-password"}
-                autoComplete={mode === "login" ? "current-password" : "new-password"}
-              />
+              <Input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required name="email" autoComplete="email" />
+              <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required name={mode === "login" ? "current-password" : "new-password"} autoComplete={mode === "login" ? "current-password" : "new-password"} />
               {error && <p className="text-sm text-red-600">{error}</p>}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-black text-white rounded py-2"
-              >
+              <Button type="submit" disabled={loading} className="w-full">
                 {loading ? "Please wait..." : mode === "login" ? "Sign in" : "Create account"}
-              </button>
+              </Button>
             </form>
           </div>
-        </div>
-      )}
+      </Modal>
     </div>
   );
 }

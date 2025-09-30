@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthModal from "@/components/AuthModal";
 import Providers from "@/components/Providers";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,9 +30,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="p-4 flex items-center justify-between border-b">
-          <div className="font-semibold">AXIO QR</div>
-          <AuthModal />
+        <div className="p-4 flex items-center justify-between border-b sticky top-0 bg-white/70 dark:bg-zinc-950/70 backdrop-blur z-40">
+          <div className="flex items-center gap-3">
+            <div className="font-semibold tracking-tight">AXIO QR</div>
+          </div>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <AuthModal />
+          </div>
         </div>
         <Providers>{children}</Providers>
       </body>
